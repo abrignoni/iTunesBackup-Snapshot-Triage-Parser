@@ -18,10 +18,13 @@ parser = argparse.ArgumentParser(description="\
 	\n\n Parse an unencrypted/decrypted iTunes Backup for app snapshot images."
 , prog='SnapTriage.py'
 , formatter_class=RawTextHelpFormatter)
+parser.add_argument('-y', action='store_true',help="Override encryption flag. Use for 3rd party decrypted backups.")
 parser.add_argument('data_dir',help="Path  to the iTunes Backup Directory")
 
 args = parser.parse_args()
 data_dir = args.data_dir
+override = str(args.y)
+
 
 pathfound = 0
 foldername = ("iTunesSnapshotTriageReports_" + datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
@@ -88,6 +91,11 @@ else:
 	with open(pathfound,'rb') as mpl:
 		pl = plistlib.load(mpl)
 		encstatus = pl['IsEncrypted']
+	
+	if override == 'True':
+		encstatus = 0
+		print('Override encrypted flag: '+override)
+		
 	if encstatus == 0:
 		print('Itunes Backup not encrypted.')
 		
